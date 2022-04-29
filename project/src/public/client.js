@@ -2,6 +2,7 @@ let store = {
     user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    photos: ''
 }
 
 // add our markup to the page
@@ -19,7 +20,7 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let { rovers, photos, apod } = state
 
     return `
         <header></header>
@@ -37,6 +38,9 @@ const App = (state) => {
                     but generally help with discoverability of relevant imagery.
                 </p>
                 ${ImageOfTheDay(apod)}
+            </section>
+            <section>
+                ${Gallery(rovers, photos)}
             </section>
         </main>
         <footer></footer>
@@ -91,7 +95,20 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
+const Gallery = (rovers, photos) => {
+    // If gallery photos don't already exist -- request them again
+    if (!photos) {
+        getRoverPhotos(rovers)
+    }
+}
+
 // ------------------------------------------------------  API CALLS
+
+const getRoverPhotos = (rovers) => {
+    rovers.map(rover => fetch(`http://localhost:3000/rovers/${rover}`)
+    .then(res => res.json())
+    .then(data => updateStore(store, { data } )))
+}
 
 // Example API call
 const getImageOfTheDay = (state) => {
