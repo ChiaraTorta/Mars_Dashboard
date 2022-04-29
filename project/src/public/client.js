@@ -2,7 +2,8 @@ let store = {
     user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-    mars_photos: []
+    mars_photos: [],
+    rover_info: {}
 }
 
 // add our markup to the page
@@ -20,15 +21,15 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, mars_photos, apod } = state
+    let { rovers, mars_photos, rover_info } = state
 
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
-            <section>
-                ${LatestPhotos(mars_photos)}
-            </section>
+            <div class="container">
+                ${ImageGallery(mars_photos)}
+                ${InfoTab(rover_info)}
+            </div>
         </main>
         <footer></footer>
     `
@@ -41,29 +42,34 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
-    return `
-        <h1>Hello!</h1>
-    `
-}
-
-const LatestPhotos = (mars_photos) => {
+const ImageGallery = (mars_photos) => {
     // If gallery mars_photos don't already exist -- request them again
     if (mars_photos.length < 1 || mars_photos === undefined) {
         getMarsPhotos(store)
+    } else {
+        // show only first 5 pictures for every rover
+        return mars_photos.photos.latest_photos.slice(0,5).map((photo, index, array) => (`
+        <div class="slide">
+            <div class="numbertext">${index+1} / ${array.length}</div>
+                <img src="${photo.img_src}" style="width:100%">
+        </div>`)).join('')
     }
+}
 
-    return (`
-            <img src="${mars_photos.photos.latest_photos[0].img_src}" height="350px" width="100%" />
-            <p>${mars_photos.photos.latest_photos[0].rover.name}</p>
-        `)
+const InfoTab = (rover_info) => {
+    // If gallery mars_photos don't already exist -- request them again
+    if (Object.keys(rover_info).length === 0) {
+        getRoverInfo(store)
+    } else {
+        // show only first 5 pictures for every rover
+        return `
+        <div class="infoTab">
+            <p>Name: ${rover_info.data.rover.name}</p>
+            <p>Launch Date: ${rover_info.data.rover.launch_date}</p>
+            <p>Landing Date: ${rover_info.data.rover.landing_date}</p>
+        </div>
+        `
+    }
 }
 
 // ------------------------------------------------------  API CALLS
@@ -75,3 +81,13 @@ const getMarsPhotos = (state) => {
     .then(res => res.json())
     .then(mars_photos => updateStore(store, { mars_photos } ))
 }
+
+const getRoverInfo = (state) => {
+    let { rover_info, rovers } = state
+
+    fetch(`http://localhost:3000/roverInfo/${rovers[0]}`)
+    .then(res => res.json())
+    .then(rover_info => updateStore(store, { rover_info } ))
+}
+
+
