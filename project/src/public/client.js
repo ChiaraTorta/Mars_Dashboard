@@ -27,7 +27,10 @@ const App = (state) => {
         <header></header>
         <main>
             <div class="container">
-                ${ImageGallery(mars_photos)}
+                ${Slides(mars_photos)}
+                <!-- Next and previous buttons -->
+                <a class="prev" onclick="">&#10094;</a>
+                <a class="next" onclick="">&#10095;</a>
                 ${InfoTab(rover_info)}
             </div>
         </main>
@@ -42,7 +45,7 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-const ImageGallery = (mars_photos) => {
+const Slides = (mars_photos) => {
     // If gallery mars_photos don't already exist -- request them again
     if (mars_photos.length < 1 || mars_photos === undefined) {
         getMarsPhotos(store)
