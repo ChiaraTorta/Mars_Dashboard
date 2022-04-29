@@ -27,7 +27,7 @@ app.get('/apod', async (req, res) => {
 
 app.get('/rovers/:rover', async (req, res) => {
     try {
-        const rover = req.params.rover ? req.params.rover : 'Curiosity';
+        const rover = req.params.rover;
         let photos = await fetch(
             `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/latest_photos?api_key=${process.env.API_KEY}`)
         .then(res => res.json())
