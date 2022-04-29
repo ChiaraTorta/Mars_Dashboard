@@ -1,6 +1,4 @@
 let store = {
-    user: { name: "Student" },
-    apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
     mars_photos: [],
     rover_info: {}
@@ -18,19 +16,18 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-
 // create content
 const App = (state) => {
-    let { rovers, mars_photos, rover_info } = state
+    let {
+        mars_photos,
+        rover_info
+    } = state
 
     return `
         <header></header>
         <main>
             <div class="container">
-                ${Slides(mars_photos)}
-                <!-- Next and previous buttons -->
-                <a class="prev" onclick="">&#10094;</a>
-                <a class="next" onclick="">&#10095;</a>
+                ${ImageGallery(mars_photos)}
                 ${InfoTab(rover_info)}
             </div>
         </main>
@@ -45,52 +42,53 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-const Slides = (mars_photos) => {
+const ImageGallery = (mars_photos) => {
     // If gallery mars_photos don't already exist -- request them again
     if (mars_photos.length < 1 || mars_photos === undefined) {
         getMarsPhotos(store)
-    } else {
-        // show only first 5 pictures for every rover
-        return mars_photos.photos.latest_photos.slice(0,5).map((photo, index, array) => (`
-        <div class="slide">
-            <div class="numbertext">${index+1} / ${array.length}</div>
-                <img src="${photo.img_src}" style="width:100%">
-        </div>`)).join('')
     }
+    return mars_photos.photos.latest_photos.slice(0, 5).map((photo) => (`
+        <div class="slide">
+            <img src="${photo.img_src}" style="width:100%">
+        </div>`)).join('')
 }
 
 const InfoTab = (rover_info) => {
     // If gallery mars_photos don't already exist -- request them again
     if (Object.keys(rover_info).length === 0) {
         getRoverInfo(store)
-    } else {
-        // show only first 5 pictures for every rover
-        return `
+    }
+    return `
         <div class="infoTab">
             <p>Name: ${rover_info.data.rover.name}</p>
             <p>Launch Date: ${rover_info.data.rover.launch_date}</p>
             <p>Landing Date: ${rover_info.data.rover.landing_date}</p>
         </div>
         `
-    }
 }
 
 // ------------------------------------------------------  API CALLS
 
 const getMarsPhotos = (state) => {
-    let { mars_photos, rovers } = state
+    let {
+        rovers
+    } = state
 
     fetch(`http://localhost:3000/rovers/${rovers[0]}`)
-    .then(res => res.json())
-    .then(mars_photos => updateStore(store, { mars_photos } ))
+        .then(res => res.json())
+        .then(mars_photos => updateStore(store, {
+            mars_photos
+        }))
 }
 
 const getRoverInfo = (state) => {
-    let { rover_info, rovers } = state
+    let {
+        rovers
+    } = state
 
     fetch(`http://localhost:3000/roverInfo/${rovers[0]}`)
-    .then(res => res.json())
-    .then(rover_info => updateStore(store, { rover_info } ))
+        .then(res => res.json())
+        .then(rover_info => updateStore(store, {
+            rover_info
+        }))
 }
-
-
