@@ -1,7 +1,9 @@
 let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
     mars_photos: [],
-    rover_info: {}
+    rover_info: {},
+    headline: 'Mars Rover Photos',
+    copy: `Image data gathered by NASA's Curiosity, Opportunity, and Spirit rovers on Mars`
 }
 
 // add our markup to the page
@@ -20,15 +22,18 @@ const render = async (root, state) => {
 const App = (state) => {
     let {
         mars_photos,
-        rover_info
+        rover_info,
+        headline,
+        copy
     } = state
 
     return `
         <header></header>
         <main>
             <div class="container">
-                ${ImageGallery(mars_photos)}
+                ${Headline(headline, copy)}
                 ${InfoTab(rover_info)}
+                ${ImageGallery(mars_photos)}
             </div>
         </main>
         <footer></footer>
@@ -42,16 +47,13 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-const ImageGallery = (mars_photos) => {
-    // If gallery mars_photos don't already exist -- request them again
-    if (mars_photos.length < 1 || mars_photos === undefined) {
-        getMarsPhotos(store)
-    } else {
-        return mars_photos.photos.latest_photos.slice(0, 5).map((photo) => (`
-        <div class="slide">
-            <img src="${photo.img_src}" style="width:100%">
-        </div>`)).join('')
-    }
+const Headline = (headline, copy) => {
+    return `
+        <div class="headline-container">
+            <h1>${headline}</h1>
+            <p>${copy}</p>
+        </div>
+    `
 }
 
 const InfoTab = (rover_info) => {
@@ -60,12 +62,24 @@ const InfoTab = (rover_info) => {
         getRoverInfo(store)
     } else {
         return `
-        <div class="infoTab">
+        <div class="infotab-container">
             <p>Name: ${rover_info.data.rover.name}</p>
             <p>Launch Date: ${rover_info.data.rover.launch_date}</p>
             <p>Landing Date: ${rover_info.data.rover.landing_date}</p>
         </div>
         `
+    }
+}
+
+const ImageGallery = (mars_photos) => {
+    // If gallery mars_photos don't already exist -- request them again
+    if (mars_photos.length < 1 || mars_photos === undefined) {
+        getMarsPhotos(store)
+    } else {
+        return mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (`
+        <div class="img-container">
+            <img src="${photo.img_src}" style="width:100%">
+        </div>`)).join('')
     }
 }
 

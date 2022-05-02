@@ -5,6 +5,7 @@ body {
   flex-direction: column;
   font-family: Arial;
   min-height: 100vh;
+  background: url("https://wallpaperaccess.com/full/538127.jpg") no-repeat center center fixed;
 }
 
 header {
@@ -23,6 +24,22 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .img-container {
+    width: 33.333%;
+  }
+
+  .infotab-container {
+    width: 100%;
+  }
+
+  .headline-container, .img-container, .infotab-container {
+    padding: 0.2cm;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
