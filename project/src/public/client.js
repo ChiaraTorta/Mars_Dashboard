@@ -1,6 +1,6 @@
 let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-    selected_rover : '' ? undefined : 'Curiosity',
+    selected_rover: '' ? undefined : 'Curiosity',
     mars_photos: [],
     rover_info: {},
     headline: 'Mars Rover Photos',
@@ -35,8 +35,8 @@ const App = (state) => {
             <div class="container">
                 ${Headline(headline, copy)}
                 ${ButtonContainer(rovers)}
-                ${InfoTab(rover_info)}
-                ${ImageGallery(mars_photos)}
+                ${rover_info.hasOwnProperty('info') ? InfoTab(rover_info) : ''}
+                ${mars_photos.hasOwnProperty('photos') ? ImageGallery(mars_photos) : ''}
             </div>
         </main>
         <footer></footer>
@@ -45,16 +45,24 @@ const App = (state) => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
+    // make API calls on load event
+    if (Object.keys(store.rover_info).length === 0) {
+        getRoverInfo(store.selected_rover)
+    }
+    if (store.mars_photos.length === 0 || store.mars_photos === undefined) {
+        getMarsPhotos(store.selected_rover)
+    }
     render(root, store)
 })
 
+// change rover data on button click
 window.addEventListener('click', (event) => {
     if (event.target.type === 'button') {
         const rover = event.target.innerText
         getRoverInfo(rover)
         getMarsPhotos(rover)
     }
-  }, false)
+})
 
 // ------------------------------------------------------  COMPONENTS
 
@@ -84,30 +92,21 @@ const Button = (rover) => {
 }
 
 const InfoTab = (rover_info) => {
-    // If gallery mars_photos don't already exist -- request them again
-    if (Object.keys(rover_info).length === 0) {
-        getRoverInfo(store.selected_rover)
-    } else {
-        return `
+    rover_info = rover_info.info.rover
+    return `
         <div class="infotab-container">
-            <p>Name: ${rover_info.data.rover.name}</p>
-            <p>Launch Date: ${rover_info.data.rover.launch_date}</p>
-            <p>Landing Date: ${rover_info.data.rover.landing_date}</p>
+            <p>Name: ${rover_info.name}</p>
+            <p>Launch Date: ${rover_info.launch_date}</p>
+            <p>Landing Date: ${rover_info.landing_date}</p>
         </div>
         `
-    }
 }
 
 const ImageGallery = (mars_photos) => {
-    // If gallery mars_photos don't already exist -- request them again
-    if (mars_photos.length < 1 || mars_photos === undefined) {
-        getMarsPhotos(store.selected_rover)
-    } else {
-        return mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (`
+    return mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (`
         <div class="img-container">
             <img src="${photo.img_src}" style="width:100%">
         </div>`)).join('')
-    }
 }
 
 // ------------------------------------------------------  API CALLS
