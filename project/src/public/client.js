@@ -23,6 +23,7 @@ const App = (state) => {
     let {
         mars_photos,
         rover_info,
+        rovers,
         headline,
         copy
     } = state
@@ -32,6 +33,7 @@ const App = (state) => {
         <main>
             <div class="container">
                 ${Headline(headline, copy)}
+                ${ButtonContainer(rovers)}
                 ${InfoTab(rover_info)}
                 ${ImageGallery(mars_photos)}
             </div>
@@ -53,6 +55,22 @@ const Headline = (headline, copy) => {
             <h1>${headline}</h1>
             <p>${copy}</p>
         </div>
+    `
+}
+
+const ButtonContainer = (rovers) => {
+    return `
+        <div class='button-container'>
+            ${rovers.map(rover => {
+                return Button(rover)
+            }).join('')}
+        </div>`
+}
+
+
+const Button = (rover) => {
+    return `
+        <button class="button" onclick="${showRoverPhotos}">${rover}</button>
     `
 }
 

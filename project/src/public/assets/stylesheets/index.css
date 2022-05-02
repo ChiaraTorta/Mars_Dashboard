@@ -33,11 +33,11 @@ footer {
     width: 33.333%;
   }
 
-  .infotab-container {
+  .headline-container, .infotab-container, .button-container {
     width: 100%;
   }
 
-  .headline-container, .img-container, .infotab-container {
+  .headline-container, .img-container, .infotab-container, .button-container {
     padding: 0.2cm;
   }
 }
