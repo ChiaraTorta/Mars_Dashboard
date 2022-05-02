@@ -1,5 +1,6 @@
 let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    selected_rover : '' ? undefined : 'Curiosity',
     mars_photos: [],
     rover_info: {},
     headline: 'Mars Rover Photos',
@@ -47,6 +48,14 @@ window.addEventListener('load', () => {
     render(root, store)
 })
 
+window.addEventListener('click', (event) => {
+    if (event.target.type === 'button') {
+        const rover = event.target.innerText
+        getRoverInfo(rover)
+        getMarsPhotos(rover)
+    }
+  }, false)
+
 // ------------------------------------------------------  COMPONENTS
 
 const Headline = (headline, copy) => {
@@ -70,14 +79,14 @@ const ButtonContainer = (rovers) => {
 
 const Button = (rover) => {
     return `
-        <button class="button" onclick="${showRoverPhotos}">${rover}</button>
+        <button type="button" class="button">${rover}</button>
     `
 }
 
 const InfoTab = (rover_info) => {
     // If gallery mars_photos don't already exist -- request them again
     if (Object.keys(rover_info).length === 0) {
-        getRoverInfo(store)
+        getRoverInfo(store.selected_rover)
     } else {
         return `
         <div class="infotab-container">
@@ -92,7 +101,7 @@ const InfoTab = (rover_info) => {
 const ImageGallery = (mars_photos) => {
     // If gallery mars_photos don't already exist -- request them again
     if (mars_photos.length < 1 || mars_photos === undefined) {
-        getMarsPhotos(store)
+        getMarsPhotos(store.selected_rover)
     } else {
         return mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (`
         <div class="img-container">
@@ -103,24 +112,16 @@ const ImageGallery = (mars_photos) => {
 
 // ------------------------------------------------------  API CALLS
 
-const getMarsPhotos = (state) => {
-    let {
-        rovers
-    } = state
-
-    fetch(`http://localhost:3000/rovers/${rovers[0]}`)
+const getMarsPhotos = (rover) => {
+    fetch(`http://localhost:3000/rovers/${rover}`)
         .then(res => res.json())
         .then(mars_photos => updateStore(store, {
             mars_photos
         }))
 }
 
-const getRoverInfo = (state) => {
-    let {
-        rovers
-    } = state
-
-    fetch(`http://localhost:3000/roverInfo/${rovers[0]}`)
+const getRoverInfo = (rover) => {
+    fetch(`http://localhost:3000/roverInfo/${rover}`)
         .then(res => res.json())
         .then(rover_info => updateStore(store, {
             rover_info
