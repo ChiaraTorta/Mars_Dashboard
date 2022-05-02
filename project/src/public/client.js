@@ -46,25 +46,27 @@ const ImageGallery = (mars_photos) => {
     // If gallery mars_photos don't already exist -- request them again
     if (mars_photos.length < 1 || mars_photos === undefined) {
         getMarsPhotos(store)
-    }
-    return mars_photos.photos.latest_photos.slice(0, 5).map((photo) => (`
+    } else {
+        return mars_photos.photos.latest_photos.slice(0, 5).map((photo) => (`
         <div class="slide">
             <img src="${photo.img_src}" style="width:100%">
         </div>`)).join('')
+    }
 }
 
 const InfoTab = (rover_info) => {
     // If gallery mars_photos don't already exist -- request them again
     if (Object.keys(rover_info).length === 0) {
         getRoverInfo(store)
-    }
-    return `
+    } else {
+        return `
         <div class="infoTab">
             <p>Name: ${rover_info.data.rover.name}</p>
             <p>Launch Date: ${rover_info.data.rover.launch_date}</p>
             <p>Landing Date: ${rover_info.data.rover.landing_date}</p>
         </div>
         `
+    }
 }
 
 // ------------------------------------------------------  API CALLS
