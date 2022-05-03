@@ -5,7 +5,7 @@ body {
   flex-direction: column;
   font-family: Arial;
   min-height: 100vh;
-  background: url("https://wallpaperaccess.com/full/538127.jpg") no-repeat center center fixed;
+  background: url("https://live.staticflickr.com/8644/16528411470_46a833878c_3k.jpg") no-repeat center center fixed;
 }
 
 header {
@@ -18,7 +18,8 @@ main {
 }
 
 footer {
-  /* footer styles */
+  color: white;
+  padding: 40px;
 }
 
 .headline-container h1, .headline-container p, .infotab-container p {
