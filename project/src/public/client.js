@@ -1,8 +1,8 @@
 let store = {
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-    selected_rover: '' ? undefined : 'Curiosity',
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
     mars_photos: [],
     rover_info: {},
+    selected_rover: '' ? '' : 'Curiosity',
     headline: 'Mars Rover Photos',
     copy: `Image data gathered by NASA's Curiosity, Opportunity, and Spirit rovers on Mars`
 }
@@ -11,8 +11,8 @@ let store = {
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
-    render(root, store)
+    newStore = Object.assign(store, newState)
+    render(root, newStore);
 }
 
 const render = async (root, state) => {
@@ -52,13 +52,14 @@ window.addEventListener('load', () => {
     if (store.mars_photos.length === 0 || store.mars_photos === undefined) {
         getMarsPhotos(store.selected_rover)
     }
-    render(root, store)
+    render(root, store) 
 })
 
 // change rover data on button click
 window.addEventListener('click', (event) => {
     if (event.target.type === 'button') {
         const rover = event.target.innerText
+        updateStore(store, {selected_rover: rover})
         getRoverInfo(rover)
         getMarsPhotos(rover)
     }
@@ -110,19 +111,18 @@ const ImageGallery = (mars_photos) => {
 }
 
 // ------------------------------------------------------  API CALLS
+const getRoverInfo = (rover) => {
+    fetch(`http://localhost:3000/roverInfo/${rover}`)
+        .then(res => res.json())
+        .then(rover_info => updateStore(store, {
+            rover_info
+        }))
+}
 
 const getMarsPhotos = (rover) => {
     fetch(`http://localhost:3000/rovers/${rover}`)
         .then(res => res.json())
         .then(mars_photos => updateStore(store, {
             mars_photos
-        }))
-}
-
-const getRoverInfo = (rover) => {
-    fetch(`http://localhost:3000/roverInfo/${rover}`)
-        .then(res => res.json())
-        .then(rover_info => updateStore(store, {
-            rover_info
         }))
 }
