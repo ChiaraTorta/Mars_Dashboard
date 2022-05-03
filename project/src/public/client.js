@@ -1,43 +1,43 @@
 let store = {
-    user: { name: "Student" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
+    mars_photos: [],
+    rover_info: {},
+    selected_rover: '' ? '' : 'Curiosity',
+    headline: 'Mars Rover Photos',
+    copy: `Image data gathered by NASA's Curiosity, Opportunity, and Spirit rovers on Mars`
 }
 
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
-    render(root, store)
+    newStore = Object.assign(store, newState)
+    render(root, newStore);
 }
 
 const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let {
+        mars_photos,
+        rover_info,
+        rovers,
+        headline,
+        copy
+    } = state
 
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${ImageOfTheDay(apod)}
-            </section>
+            <div class="container">
+                ${Headline(headline, copy)}
+                ${ButtonContainer(rovers)}
+                ${rover_info.hasOwnProperty('info') ? InfoTab(rover_info) : ''}
+                ${mars_photos.hasOwnProperty('photos') ? ImageGallery(mars_photos) : ''}
+            </div>
         </main>
         <footer></footer>
     `
@@ -45,61 +45,85 @@ const App = (state) => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
-    render(root, store)
+    // make API calls on load event
+    if (Object.keys(store.rover_info).length === 0) {
+        getRoverInfo(store.selected_rover)
+    }
+    if (store.mars_photos.length === 0 || store.mars_photos === undefined) {
+        getMarsPhotos(store.selected_rover)
+    }
+    render(root, store) 
+})
+
+// change rover data on button click
+window.addEventListener('click', (event) => {
+    if (event.target.type === 'button') {
+        const rover = event.target.innerText
+        updateStore(store, {selected_rover: rover})
+        getRoverInfo(rover)
+        getMarsPhotos(rover)
+    }
 })
 
 // ------------------------------------------------------  COMPONENTS
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
+const Headline = (headline, copy) => {
     return `
-        <h1>Hello!</h1>
+        <div class="headline-container">
+            <h1>${headline}</h1>
+            <p>${copy}</p>
+        </div>
     `
 }
 
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
+const ButtonContainer = (rovers) => {
+    return `
+        <div class='button-container'>
+            ${rovers.map(rover => {
+                return Button(rover)
+            }).join('')}
+        </div>`
+}
 
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
 
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
+const Button = (rover) => {
+    return `
+        <button type="button" class="button">${rover}</button>
+    `
+}
 
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
-    }
+const InfoTab = (rover_info) => {
+    rover_info = rover_info.info.rover
+    return `
+        <div class="infotab-container">
+            <p>Name: ${rover_info.name}</p>
+            <p>Launch Date: ${rover_info.launch_date}</p>
+            <p>Landing Date: ${rover_info.landing_date}</p>
+        </div>
+        `
+}
+
+const ImageGallery = (mars_photos) => {
+    return `<div class="img-container">
+                ${mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (
+                    `<img src="${photo.img_src}" style="width:100%">`)).join('')}
+            </div>
+            `
 }
 
 // ------------------------------------------------------  API CALLS
-
-// Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
-
-    fetch(`http://localhost:3000/apod`)
+const getRoverInfo = (rover) => {
+    fetch(`http://localhost:3000/roverInfo/${rover}`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(rover_info => updateStore(store, {
+            rover_info
+        }))
+}
 
-    return data
+const getMarsPhotos = (rover) => {
+    fetch(`http://localhost:3000/rovers/${rover}`)
+        .then(res => res.json())
+        .then(mars_photos => updateStore(store, {
+            mars_photos
+        }))
 }

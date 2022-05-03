@@ -5,6 +5,7 @@ body {
   flex-direction: column;
   font-family: Arial;
   min-height: 100vh;
+  background: url("https://wallpaperaccess.com/full/538127.jpg") no-repeat center center fixed;
 }
 
 header {
@@ -20,9 +21,30 @@ footer {
   /* footer styles */
 }
 
+.headline-container h1, .headline-container p, .infotab-container p {
+  color: white;
+}
+ 
+.headline-container, .infotab-container, .button-container {
+  padding: 20px;
+  width: 100%;
+}
+
+.img-container img {
+  padding: 20px;
+}
+
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .img-container img {
+    width: 33.333% !important;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
