@@ -21,6 +21,19 @@ footer {
   /* footer styles */
 }
 
+.headline-container h1, .headline-container p, .infotab-container p {
+  color: white;
+}
+ 
+.headline-container, .infotab-container, .button-container {
+  padding: 20px;
+  width: 100%;
+}
+
+.img-container img {
+  padding: 20px;
+}
+
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
@@ -29,16 +42,8 @@ footer {
     flex-wrap: wrap;
   }
 
-  .img-container {
-    width: 33.333%;
-  }
-
-  .headline-container, .infotab-container, .button-container {
-    width: 100%;
-  }
-
-  .headline-container, .img-container, .infotab-container, .button-container {
-    padding: 0.2cm;
+  .img-container img {
+    width: 33.333% !important;
   }
 }
 

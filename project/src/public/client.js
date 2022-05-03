@@ -104,10 +104,11 @@ const InfoTab = (rover_info) => {
 }
 
 const ImageGallery = (mars_photos) => {
-    return mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (`
-        <div class="img-container">
-            <img src="${photo.img_src}" style="width:100%">
-        </div>`)).join('')
+    return `<div class="img-container">
+                ${mars_photos.photos.latest_photos.slice(0, 6).map((photo) => (
+                    `<img src="${photo.img_src}" style="width:100%">`)).join('')}
+            </div>
+            `
 }
 
 // ------------------------------------------------------  API CALLS
