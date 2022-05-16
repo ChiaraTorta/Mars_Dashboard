@@ -44,15 +44,11 @@ const App = (state) => {
 }
 
 // listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
     // make API calls on load event
-    if (Object.keys(store.rover_info).length === 0) {
-        getRoverInfo(store.selected_rover)
-    }
-    if (store.mars_photos.length === 0 || store.mars_photos === undefined) {
-        getMarsPhotos(store.selected_rover)
-    }
-    render(root, store) 
+    await getRoverInfo(store.selected_rover)
+    await getMarsPhotos(store.selected_rover)
+    render(root, store)
 })
 
 // change rover data on button click
@@ -79,12 +75,9 @@ const Headline = (headline, copy) => {
 const ButtonContainer = (rovers) => {
     return `
         <div class='button-container'>
-            ${rovers.map(rover => {
-                return Button(rover)
-            }).join('')}
+            ${rovers.map(rover => Button(rover)).join('')}
         </div>`
 }
-
 
 const Button = (rover) => {
     return `
