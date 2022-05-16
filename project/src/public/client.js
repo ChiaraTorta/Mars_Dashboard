@@ -75,9 +75,7 @@ const Headline = (headline, copy) => {
 const ButtonContainer = (rovers) => {
     return `
         <div class='button-container'>
-            ${rovers.map(rover => {
-                return Button(rover)
-            }).join('')}
+            ${rovers.map(rover => Button(rover)).join('')}
         </div>`
 }
 
